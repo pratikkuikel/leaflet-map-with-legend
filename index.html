@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pennsylvania Counties Map</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    #legend {
+      flex: 1;
+      background: white;
+      padding: 10px;
+    }
+
+    #map {
+      flex: 2;
+      height: 800px;
+    }
+
+    .legend-item {
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+
+    .legend-item:hover {
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="legend">
+    <strong>Counties</strong><br>
+    <div id="legend-content"></div>
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script>
+    // Initialize Leaflet map
+    var map = L.map('map').setView([40.9, -77.8], 8); // Centered roughly on Pennsylvania
+
+    // Add base map layer (similar to Google Maps)
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Data for specified Pennsylvania counties
+    var counties = [
+      { name: "Adams", coordinates: [39.8718, -77.2167] },
+      { name: "Allegheny", coordinates: [40.4681, -79.9311] },
+      { name: "Armstrong", coordinates: [40.8136, -79.5241] },
+      { name: "Beaver", coordinates: [40.6837, -80.3494] },
+      { name: "Bedford", coordinates: [40.0034, -78.4912] },
+      { name: "Berks", coordinates: [40.4112, -75.9216] },
+      { name: "Blair", coordinates: [40.485, -78.3947] },
+      { name: "Bradford", coordinates: [41.7885, -76.5155] },
+      { name: "Bucks", coordinates: [40.3363, -75.1068] },
+      { name: "Butler", coordinates: [40.9115, -79.7964] },
+      { name: "Cambria", coordinates: [40.488, -78.7443] },
+      { name: "Cameron", coordinates: [41.4386, -78.2391] },
+      { name: "Carbon", coordinates: [40.9014, -75.665] },
+      { name: "Centre", coordinates: [40.9183, -77.8194] },
+      { name: "Chester", coordinates: [39.9744, -75.758] },
+      { name: "Clarion", coordinates: [41.19, -79.4247] },
+      { name: "Clearfield", coordinates: [41.0273, -78.4481] },
+      { name: "Clinton", coordinates: [41.2663, -77.7517] },
+      { name: "Columbia", coordinates: [41.0399, -76.4059] },
+      { name: "Crawford", coordinates: [41.6888, -80.0581] },
+      { name: "Cumberland", coordinates: [40.1718, -77.2439] },
+      { name: "Dauphin", coordinates: [40.3839, -76.9063] },
+      { name: "Delaware", coordinates: [39.9167, -75.3879] },
+      { name: "Elk", coordinates: [41.4347, -78.6105] },
+      { name: "Erie", coordinates: [42.1292, -80.0851] },
+      { name: "Fayette", coordinates: [39.9205, -79.6551] },
+      { name: "Forest", coordinates: [41.5198, -79.1829] },
+      { name: "Franklin", coordinates: [39.9326, -77.721] },
+      { name: "Fulton", coordinates: [39.9311, -78.119] },
+      { name: "Greene", coordinates: [39.844, -80.2243] },
+      { name: "Huntingdon", coordinates: [40.3917, -77.9977] },
+      { name: "Indiana", coordinates: [40.6527, -79.1081] },
+      { name: "Jefferson", coordinates: [41.128, -78.9411] },
+      { name: "Juniata", coordinates: [40.543, -77.3997] },
+      { name: "Lackawanna", coordinates: [41.4423, -75.5742] },
+      { name: "Lancaster", coordinates: [40.0413, -76.2131] },
+      { name: "Lawrence", coordinates: [40.9955, -80.331] },
+      { name: "Lebanon", coordinates: [40.366, -76.4999] },
+      { name: "Lehigh", coordinates: [40.6156, -75.5522] },
+      { name: "Luzerne", coordinates: [41.1734, -75.9719] },
+      { name: "Lycoming", coordinates: [41.3419, -77.0322] },
+      { name: "McKean", coordinates: [41.8267, -78.5675] },
+      { name: "Mercer", coordinates: [41.3011, -80.2342] },
+      { name: "Mifflin", coordinates: [40.6137, -77.5891] },
+      { name: "Monroe", coordinates: [41.0402, -75.2961] },
+      { name: "Montgomery", coordinates: [40.2295, -75.3879] },
+      { name: "Montour", coordinates: [41.0281, -76.6576] },
+      { name: "Northampton", coordinates: [40.7513, -75.308] },
+      { name: "Northumberland", coordinates: [40.8576, -76.6771] },
+      { name: "Perry", coordinates: [40.4006, -77.2405] },
+      { name: "Philadelphia", coordinates: [40.0076, -75.134] },
+      { name: "Pike", coordinates: [41.3367, -75.0446] },
+      { name: "Potter", coordinates: [41.6748, -77.9272] },
+      { name: "Schuylkill", coordinates: [40.6891, -76.1952] },
+      { name: "Snyder", coordinates: [40.7745, -77.0709] },
+      { name: "Somerset", coordinates: [39.9859, -79.0185] },
+      { name: "Sullivan", coordinates: [41.4571, -76.5262] },
+      { name: "Susquehanna", coordinates: [41.8063, -75.827] },
+      { name: "Tioga", coordinates: [41.7682, -77.2975] },
+      { name: "Union", coordinates: [40.9621, -76.8909] },
+      { name: "Venango", coordinates: [41.3874, -79.7767] },
+      { name: "Warren", coordinates: [41.8399, -79.4152] },
+      { name: "Washington", coordinates: [40.1742, -80.2462] },
+      { name: "Wayne", coordinates: [41.6473, -75.2652] },
+      { name: "Westmoreland", coordinates: [40.313, -79.4681] },
+      { name: "Wyoming", coordinates: [41.5207, -76.0087] },
+      { name: "York", coordinates: [39.9215, -76.7304] }
+    ];
+
+    // Add markers with popups for each county
+    counties.forEach(function (county) {
+      var marker = L.marker(county.coordinates).addTo(map);
+      marker.bindTooltip(county.name, { permanent: false, direction: 'right' });
+
+      // Create legend item
+      var legendItem = document.createElement('div');
+      legendItem.innerHTML = county.name;
+      legendItem.className = 'legend-item';
+
+      legendItem.addEventListener('mouseover', function () {
+        map.setView(county.coordinates, 10); // Zoom to county when legend item hovered
+        marker.openTooltip();
+      });
+      legendItem.addEventListener('mouseout', function () {
+        marker.closeTooltip();
+      });
+
+      document.getElementById('legend-content').appendChild(legendItem);
+    });
+
+  </script>
+
+</body>
+
+</html>
